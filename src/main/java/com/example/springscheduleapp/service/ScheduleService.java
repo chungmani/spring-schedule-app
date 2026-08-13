@@ -61,9 +61,22 @@ public class ScheduleService {
         return new UpdateScheduleResponse(schedule.getTitle(), schedule.getAuthor(), schedule.getModifiedAt());
     }
 
+    @Transactional
+    public void delete(Long scheduleId, DeleteScheduleRequest request) {
+        Schedule schedule = getOrThrow(scheduleId);
+        if (!schedule.getPassword().equals(request.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        scheduleRepository.delete(schedule);
+    }
+
+
+    // DB에서 id찾는 공통 처리 메서드
     private Schedule getOrThrow(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 스케줄입니다.")
         );
     }
+
+
 }

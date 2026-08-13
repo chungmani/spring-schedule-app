@@ -1,4 +1,4 @@
-package com.example.springscheduleapp.entity;
+package com.example.springscheduleapp.schedule.entity;
 
 import com.example.springscheduleapp.common.BaseEntity;
 import jakarta.persistence.*;

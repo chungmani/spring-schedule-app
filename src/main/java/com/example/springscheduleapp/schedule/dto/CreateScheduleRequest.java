@@ -1,11 +1,12 @@
-package com.example.springscheduleapp.dto;
+package com.example.springscheduleapp.schedule.dto;
 
 import lombok.Getter;
 
 @Getter
-public class UpdateScheduleRequest {
+public class CreateScheduleRequest {
 
     private String title;
+    private String content;
     private String author;
     private String password;
 }

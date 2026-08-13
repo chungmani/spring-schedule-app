@@ -1,8 +1,6 @@
 package com.example.springscheduleapp.service;
 
-import com.example.springscheduleapp.dto.CreateScheduleRequest;
-import com.example.springscheduleapp.dto.CreateScheduleResponse;
-import com.example.springscheduleapp.dto.GetScheduleResponse;
+import com.example.springscheduleapp.dto.*;
 import com.example.springscheduleapp.entity.Schedule;
 import com.example.springscheduleapp.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,12 +44,26 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public GetScheduleResponse getOne(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 스케줄입니다.")
-        );
+        Schedule schedule = getOrThrow(scheduleId);
 
         return new GetScheduleResponse(schedule.getId(), schedule.getTitle(),
                 schedule.getContent(), schedule.getAuthor(),
                 schedule.getCreatedAt(), schedule.getModifiedAt());
+    }
+
+    @Transactional
+    public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
+        Schedule schedule = getOrThrow(scheduleId);
+        if (!schedule.getPassword().equals(request.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        schedule.updateSchedule(request.getTitle(), request.getAuthor());
+        return new UpdateScheduleResponse(schedule.getTitle(), schedule.getAuthor(), schedule.getModifiedAt());
+    }
+
+    private Schedule getOrThrow(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("없는 스케줄입니다.")
+        );
     }
 }

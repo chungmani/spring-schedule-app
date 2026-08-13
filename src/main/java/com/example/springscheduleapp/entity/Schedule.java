@@ -25,7 +25,7 @@ public class Schedule extends BaseEntity {
     @Column(name = "author", length = 20, nullable = false)
     private String author;
 
-    @Column(length = 100, nullable = false)
+    @Column(name = "password", length = 100, nullable = false)
     private String password;
 
 

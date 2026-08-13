@@ -34,8 +34,8 @@ public class ScheduleService {
 
     // 전체 조회 메서드
     @Transactional(readOnly = true)
-    public List<GetScheduleResponse> getAll() {
-        List<Schedule> schedules = scheduleRepository.findAll();
+    public List<GetScheduleResponse> getAll(String author) {
+        List<Schedule> schedules = scheduleRepository.findAllByAuthor(author);
         return schedules.stream()
                 .map(schedule -> new GetScheduleResponse(
                         schedule.getId(), schedule.getTitle(), schedule.getContent(),

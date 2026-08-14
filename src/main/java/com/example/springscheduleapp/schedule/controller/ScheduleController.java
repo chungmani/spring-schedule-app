@@ -1,5 +1,6 @@
 package com.example.springscheduleapp.schedule.controller;
 
+import com.example.springscheduleapp.common.Validate;
 import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,15 @@ import java.util.List;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    private final Validate validate;
 
     @PostMapping
     public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
+        validate.validateTitle(request.getTitle());
+        validate.validateContent(request.getContent());
+        validate.validatePassword(request.getPassword());
+        validate.validateAuthor(request.getAuthor());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(request));
     }
 
@@ -37,6 +44,8 @@ public class ScheduleController {
     @PutMapping("/{scheduleId}")
     public ResponseEntity<UpdateScheduleResponse> update(
             @PathVariable Long scheduleId, @RequestBody UpdateScheduleRequest request) {
+        validate.validateTitle(request.getTitle());
+        validate.validateAuthor(request.getAuthor());
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(scheduleId, request));
     }
 

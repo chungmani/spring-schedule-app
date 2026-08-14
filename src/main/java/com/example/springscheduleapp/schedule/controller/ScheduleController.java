@@ -1,6 +1,5 @@
 package com.example.springscheduleapp.schedule.controller;
 
-import com.example.springscheduleapp.dto.*;
 import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class ScheduleController {
 
     // 전체 일정 조회
     @GetMapping
-    public ResponseEntity<List<GetScheduleResponse>> getAll(@RequestParam(required = false) String author) {
+    public ResponseEntity<List<GetSchedulesResponse>> getAll(@RequestParam(required = false) String author) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll(author));
     }
 

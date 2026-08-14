@@ -1,5 +1,6 @@
 package com.example.springscheduleapp.comment.service;
 
+import com.example.springscheduleapp.comment.dto.CommentResponse;
 import com.example.springscheduleapp.comment.dto.CreateCommentRequest;
 import com.example.springscheduleapp.comment.dto.CreateCommentResponse;
 import com.example.springscheduleapp.comment.entity.Comment;
@@ -8,6 +9,9 @@ import com.example.springscheduleapp.schedule.entity.Schedule;
 import com.example.springscheduleapp.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +21,7 @@ public class CommentService {
     private final ScheduleRepository scheduleRepository;
 
     // 댓글 생성 (1스케줄당 10개까지만 가능)
+    @Transactional
     public CreateCommentResponse create(Long scheduleId, CreateCommentRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 스케줄입니다.")
@@ -31,5 +36,18 @@ public class CommentService {
                 savedComment.getContent(), savedComment.getName(),
                 savedComment.getCreatedAt(), savedComment.getModifiedAt()
         );
+    }
+
+    // 한 게시물의 전체 댓글 조회
+    @Transactional(readOnly = true)
+    public List<CommentResponse> getAllComments(Long scheduleId) {
+        List<Comment> comments = commentRepository.findAllByScheduleId(scheduleId);
+
+        return comments.stream()
+                .map(comment -> new CommentResponse(
+                        comment.getContent(), comment.getName(),
+                        comment.getCreatedAt(), comment.getModifiedAt()
+                ))
+                .toList();
     }
 }

@@ -1,14 +1,11 @@
 package com.example.springscheduleapp.schedule.dto;
 
-import com.example.springscheduleapp.comment.dto.CommentResponse;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
-public class GetScheduleResponse {
-
+public class GetSchedulesResponse {
     private final Long id;
     private final String title;
     private final String content;
@@ -16,15 +13,12 @@ public class GetScheduleResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    private final List<CommentResponse> comments;
-
-    public GetScheduleResponse(Long id, String title, String content, String author, LocalDateTime createdAt, LocalDateTime modifiedAt, List<CommentResponse> comments) {
+    public GetSchedulesResponse(Long id, String title, String content, String author, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.author = author;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
-        this.comments = comments;
     }
 }

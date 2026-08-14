@@ -1,5 +1,8 @@
 package com.example.springscheduleapp.schedule.service;
 
+import com.example.springscheduleapp.comment.dto.CommentResponse;
+import com.example.springscheduleapp.comment.repository.CommentRepository;
+import com.example.springscheduleapp.comment.service.CommentService;
 import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.entity.Schedule;
 import com.example.springscheduleapp.schedule.repository.ScheduleRepository;
@@ -14,6 +17,7 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final CommentService commentService;
 
     @Transactional
     public CreateScheduleResponse create(CreateScheduleRequest request) {
@@ -32,23 +36,26 @@ public class ScheduleService {
 
     // 전체 조회 메서드
     @Transactional(readOnly = true)
-    public List<GetScheduleResponse> getAll(String author) {
+    public List<GetSchedulesResponse> getAll(String author) {
         List<Schedule> schedules = scheduleRepository.findAllByAuthor(author);
         return schedules.stream()
-                .map(schedule -> new GetScheduleResponse(
+                .map(schedule -> new GetSchedulesResponse(
                         schedule.getId(), schedule.getTitle(), schedule.getContent(),
                         schedule.getAuthor(), schedule.getCreatedAt(), schedule.getModifiedAt()
                 ))
                 .toList();
     }
 
+    // 단건 조회 + 댓글까지 조회
     @Transactional(readOnly = true)
     public GetScheduleResponse getOne(Long scheduleId) {
         Schedule schedule = getOrThrow(scheduleId);
+        List<CommentResponse> comments = commentService.getAllComments(scheduleId);
 
         return new GetScheduleResponse(schedule.getId(), schedule.getTitle(),
                 schedule.getContent(), schedule.getAuthor(),
-                schedule.getCreatedAt(), schedule.getModifiedAt());
+                schedule.getCreatedAt(), schedule.getModifiedAt(), comments
+        );
     }
 
     @Transactional

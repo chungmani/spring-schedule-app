@@ -21,9 +21,8 @@ public class ScheduleController {
     // 일정 생성
     @PostMapping
     public ResponseEntity<CreateScheduleResponse> createSchedule(Long userId, @RequestBody CreateScheduleRequest request) {
-        validate.validateTitle(request.getTitle());
-        validate.validateContent(request.getContent());
-
+        validate.validateTitle(request.title());
+        validate.validateContent(request.content());
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(userId, request));
     }
 
@@ -43,15 +42,14 @@ public class ScheduleController {
     @PutMapping("/{scheduleId}")
     public ResponseEntity<UpdateScheduleResponse> update(
             @PathVariable Long scheduleId, @RequestBody UpdateScheduleRequest request) {
-        validate.validateTitle(request.getTitle());
-        validate.validateAuthor(request.getAuthor());
+        validate.validateTitle(request.title());
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(scheduleId, request));
     }
 
     // 일정 삭제
     @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<Void> delete(@PathVariable Long scheduleId, @RequestBody DeleteScheduleRequest request) {
-        scheduleService.delete(scheduleId, request);
+    public ResponseEntity<Void> delete(@PathVariable Long scheduleId) {
+        scheduleService.delete(scheduleId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

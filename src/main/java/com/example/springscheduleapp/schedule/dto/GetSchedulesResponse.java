@@ -8,6 +8,7 @@ public record GetSchedulesResponse (
         Long id,
         String title,
         String content,
+        String username,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt
 ) {
@@ -16,9 +17,9 @@ public record GetSchedulesResponse (
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
+                schedule.getUser().getName(),
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );
-
     }
 }

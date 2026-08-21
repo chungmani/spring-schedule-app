@@ -2,7 +2,6 @@ package com.example.springscheduleapp.user.service;
 
 import com.example.springscheduleapp.user.dto.CreateUserRequest;
 import com.example.springscheduleapp.user.dto.CreateUserResponse;
-import com.example.springscheduleapp.user.dto.GetUserResponse;
 import com.example.springscheduleapp.user.entity.User;
 import com.example.springscheduleapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

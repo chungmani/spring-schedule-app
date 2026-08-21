@@ -1,7 +1,6 @@
 package com.example.springscheduleapp.schedule.service;
 
 import com.example.springscheduleapp.comment.dto.CommentResponse;
-import com.example.springscheduleapp.comment.repository.CommentRepository;
 import com.example.springscheduleapp.comment.service.CommentService;
 import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.entity.Schedule;
@@ -36,10 +35,7 @@ public class ScheduleService {
     public List<GetSchedulesResponse> getAll() {
         List<Schedule> schedules = scheduleRepository.findAll();
         return schedules.stream()
-                .map(schedule -> new GetSchedulesResponse(
-                        schedule.getId(), schedule.getTitle(), schedule.getContent(),
-                        schedule.getCreatedAt(), schedule.getModifiedAt()
-                ))
+                .map(GetSchedulesResponse::from)
                 .toList();
     }
 
@@ -49,28 +45,21 @@ public class ScheduleService {
         Schedule schedule = getOrThrow(scheduleId);
         List<CommentResponse> comments = commentService.getAllComments(scheduleId);
 
-        return new GetScheduleResponse(schedule.getId(), schedule.getTitle(),
-                schedule.getContent(), schedule.getAuthor(),
-                schedule.getCreatedAt(), schedule.getModifiedAt(), comments
-        );
+        return GetScheduleResponse.from(schedule, comments);
     }
 
+    // 일정 수정
     @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = getOrThrow(scheduleId);
-        if (!schedule.getPassword().equals(request.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-        schedule.updateSchedule(request.getTitle(), request.getAuthor());
-        return new UpdateScheduleResponse(schedule.getTitle(), schedule.getAuthor(), schedule.getModifiedAt());
+        schedule.updateSchedule(schedule.getTitle(), schedule.getContent());
+        return UpdateScheduleResponse.from(schedule);
     }
 
+    // 일정 삭제
     @Transactional
-    public void delete(Long scheduleId, DeleteScheduleRequest request) {
+    public void delete(Long scheduleId) {
         Schedule schedule = getOrThrow(scheduleId);
-        if (!schedule.getPassword().equals(request.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
         scheduleRepository.delete(schedule);
     }
 
@@ -81,6 +70,4 @@ public class ScheduleService {
                 () -> new IllegalStateException("없는 스케줄입니다.")
         );
     }
-
-
 }

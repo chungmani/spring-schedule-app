@@ -6,6 +6,7 @@ import com.example.springscheduleapp.comment.service.CommentService;
 import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.entity.Schedule;
 import com.example.springscheduleapp.schedule.repository.ScheduleRepository;
+import com.example.springscheduleapp.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,17 +20,17 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CommentService commentService;
 
+    // 일정 생성
     @Transactional
-    public CreateScheduleResponse create(CreateScheduleRequest request) {
-        Schedule schedule = new Schedule(
-                request.getTitle(), request.getContent(), request.getAuthor(), request.getPassword()
-        );
+    public CreateScheduleResponse create(Long userId, CreateScheduleRequest request) {
+        User user =
+        Schedule schedule = new Schedule(request.getTitle(), request.getContent(), userId);
 
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
         return new CreateScheduleResponse(
                 savedSchedule.getId(), savedSchedule.getTitle(),
-                savedSchedule.getContent(), savedSchedule.getAuthor(),
+                savedSchedule.getContent(),
                 savedSchedule.getCreatedAt(), savedSchedule.getModifiedAt()
         );
     }
@@ -41,7 +42,7 @@ public class ScheduleService {
         return schedules.stream()
                 .map(schedule -> new GetSchedulesResponse(
                         schedule.getId(), schedule.getTitle(), schedule.getContent(),
-                        schedule.getAuthor(), schedule.getCreatedAt(), schedule.getModifiedAt()
+                        schedule.getCreatedAt(), schedule.getModifiedAt()
                 ))
                 .toList();
     }

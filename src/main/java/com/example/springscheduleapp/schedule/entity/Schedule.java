@@ -1,6 +1,7 @@
 package com.example.springscheduleapp.schedule.entity;
 
 import com.example.springscheduleapp.common.BaseEntity;
+import com.example.springscheduleapp.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,23 +23,18 @@ public class Schedule extends BaseEntity {
     @Column(name = "content", length = 200, nullable = false)
     private String content;
 
-    @Column(name = "author", length = 20, nullable = false)
-    private String author;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "password", length = 100, nullable = false)
-    private String password;
-
-
-    public Schedule(String title, String content, String author, String password) {
+    public Schedule(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.author = author;
-        this.password = password;
+        this.user = user;
     }
 
-    public void updateSchedule(String title, String author) {
+    public void updateSchedule(String title, String content) {
         this.title = title;
-        this.author = author;
+        this.content = content;
     }
-
 }

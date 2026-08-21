@@ -22,8 +22,6 @@ public class ScheduleController {
     public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
         validate.validateTitle(request.getTitle());
         validate.validateContent(request.getContent());
-        validate.validatePassword(request.getPassword());
-        validate.validateAuthor(request.getAuthor());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(request));
     }

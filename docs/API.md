@@ -179,9 +179,9 @@
 
 ---
 
-### 2-3. 유저 단건 조회
+### 2-3. 유저 단건 조회 (이메일로 조회)
 
-**GET** `/api/users/{id}`
+**GET** `/api/users?email={email}`
 
 #### Response
 
@@ -201,7 +201,7 @@
 
 ### 2-4. 유저 수정
 
-**PUT** `/api/users/{id}`
+**PATCH** `/api/users/{id}`
 
 #### Request
 
@@ -217,6 +217,7 @@
 
 ```json
 {
+  "id": 1,
   "name": "",
   "createdAt": "",
   "modifiedAt": ""

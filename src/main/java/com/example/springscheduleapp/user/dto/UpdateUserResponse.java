@@ -1,21 +1,20 @@
 package com.example.springscheduleapp.user.dto;
 
 import com.example.springscheduleapp.user.entity.User;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
-public record GetUserResponse(
+public record UpdateUserResponse(
         Long id,
         String name,
-        String email,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt
 ) {
-    public static GetUserResponse from(User user) {
-        return new GetUserResponse(
+    public static UpdateUserResponse from(User user) {
+        return new UpdateUserResponse(
                 user.getId(),
                 user.getName(),
-                user.getEmail(),
                 user.getCreatedAt(),
                 user.getModifiedAt()
         );

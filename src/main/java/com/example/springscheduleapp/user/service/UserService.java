@@ -16,9 +16,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // 유저 생성
+    // 회원가입
     @Transactional
     public CreateUserResponse create(CreateUserRequest request) {
+        boolean existEmail = userRepository.existsByEmail(request.email());
+        if (existEmail) {
+            throw new IllegalStateException("중복된 이메일입니다.");
+        }
         User user = new User(request.name(), request.email(), request.password());
         User savedUser = userRepository.save(user);
         return CreateUserResponse.from(savedUser);

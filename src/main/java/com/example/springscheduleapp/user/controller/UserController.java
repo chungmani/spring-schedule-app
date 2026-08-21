@@ -16,12 +16,6 @@ public class UserController {
 
     private final UserService userService;
 
-    // 유저 생성
-    @PostMapping
-    public ResponseEntity<CreateUserResponse> create(@RequestBody CreateUserRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
-    }
-
     // 유저 전체 조회
     @GetMapping
     public ResponseEntity<List<GetUserResponse>> getUsers() {

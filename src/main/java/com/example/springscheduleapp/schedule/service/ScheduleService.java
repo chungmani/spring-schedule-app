@@ -7,6 +7,7 @@ import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.entity.Schedule;
 import com.example.springscheduleapp.schedule.repository.ScheduleRepository;
 import com.example.springscheduleapp.user.entity.User;
+import com.example.springscheduleapp.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,26 +20,27 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final CommentService commentService;
+    private final UserService userService;
 
     // 일정 생성
     @Transactional
     public CreateScheduleResponse create(Long userId, CreateScheduleRequest request) {
-        User user =
-        Schedule schedule = new Schedule(request.getTitle(), request.getContent(), userId);
+        User user = userService.findById(userId);
+        Schedule schedule = new Schedule(request.getTitle(), request.getContent(), user);
 
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
         return new CreateScheduleResponse(
                 savedSchedule.getId(), savedSchedule.getTitle(),
-                savedSchedule.getContent(),
+                savedSchedule.getContent(), savedSchedule.getUser().getName(),
                 savedSchedule.getCreatedAt(), savedSchedule.getModifiedAt()
         );
     }
 
     // 전체 조회 메서드
     @Transactional(readOnly = true)
-    public List<GetSchedulesResponse> getAll(String author) {
-        List<Schedule> schedules = scheduleRepository.findAllByAuthor(author);
+    public List<GetSchedulesResponse> getAll() {
+        List<Schedule> schedules = scheduleRepository.findAll();
         return schedules.stream()
                 .map(schedule -> new GetSchedulesResponse(
                         schedule.getId(), schedule.getTitle(), schedule.getContent(),

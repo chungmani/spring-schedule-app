@@ -18,18 +18,19 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     private final Validate validate;
 
+    // 일정 생성
     @PostMapping
-    public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
+    public ResponseEntity<CreateScheduleResponse> createSchedule(Long userId, @RequestBody CreateScheduleRequest request) {
         validate.validateTitle(request.getTitle());
         validate.validateContent(request.getContent());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(userId, request));
     }
 
     // 전체 일정 조회
     @GetMapping
-    public ResponseEntity<List<GetSchedulesResponse>> getAll(@RequestParam(required = false) String author) {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll(author));
+    public ResponseEntity<List<GetSchedulesResponse>> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll());
     }
 
     // 단건 조회

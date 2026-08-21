@@ -23,12 +23,11 @@ public class UserService {
         return CreateUserResponse.from(savedUser);
     }
 
-    // 유저 단건 조회
+    // 일정 생성용 유저 조회 (api 응답 x)
     @Transactional(readOnly = true)
-    public GetUserResponse findById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("없는 유저입니다.")
         );
-        return GetUserResponse.from(user);
     }
 }

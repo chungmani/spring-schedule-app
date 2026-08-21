@@ -26,15 +26,9 @@ public class ScheduleService {
     @Transactional
     public CreateScheduleResponse create(Long userId, CreateScheduleRequest request) {
         User user = userService.findById(userId);
-        Schedule schedule = new Schedule(request.getTitle(), request.getContent(), user);
-
+        Schedule schedule = new Schedule(request.title(), request.content(), user);
         Schedule savedSchedule = scheduleRepository.save(schedule);
-
-        return new CreateScheduleResponse(
-                savedSchedule.getId(), savedSchedule.getTitle(),
-                savedSchedule.getContent(), savedSchedule.getUser().getName(),
-                savedSchedule.getCreatedAt(), savedSchedule.getModifiedAt()
-        );
+        return CreateScheduleResponse.from(savedSchedule);
     }
 
     // 전체 조회 메서드

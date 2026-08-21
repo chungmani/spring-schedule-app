@@ -1,22 +1,24 @@
 package com.example.springscheduleapp.schedule.dto;
 
-import lombok.Getter;
+import com.example.springscheduleapp.schedule.entity.Schedule;
 
 import java.time.LocalDateTime;
 
-@Getter
-public class GetSchedulesResponse {
-    private final Long id;
-    private final String title;
-    private final String content;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime modifiedAt;
+public record GetSchedulesResponse (
+        Long id,
+        String title,
+        String content,
+        LocalDateTime createdAt,
+        LocalDateTime modifiedAt
+) {
+    public static GetSchedulesResponse from(Schedule schedule) {
+        return new GetSchedulesResponse(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
 
-    public GetSchedulesResponse(Long id, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 }

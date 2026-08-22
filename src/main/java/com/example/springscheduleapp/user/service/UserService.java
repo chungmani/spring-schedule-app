@@ -1,8 +1,10 @@
 package com.example.springscheduleapp.user.service;
 
+import com.example.springscheduleapp.auth.dto.LoginRequest;
 import com.example.springscheduleapp.user.dto.*;
 import com.example.springscheduleapp.user.entity.User;
 import com.example.springscheduleapp.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,12 +68,24 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    // 로그인
+    public User login(@Valid LoginRequest request) {
+        User user = userRepository.findByEmail(request.email()).orElseThrow(
+                () -> new IllegalStateException("이메일 또는 비밀번호가 일치하지 않습니다.")
+        );
+        if (!request.password().equals(user.getPassword())) {
+            throw new IllegalStateException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+        return user;
+    }
+
     // 공통메서드 분리
     private User getOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("없는 유저입니다.")
         );
     }
+
 
 
 }

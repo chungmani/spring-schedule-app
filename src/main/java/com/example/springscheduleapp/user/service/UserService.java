@@ -1,10 +1,14 @@
 package com.example.springscheduleapp.user.service;
 
+import com.example.springscheduleapp.auth.dto.CreateUserRequest;
+import com.example.springscheduleapp.auth.dto.CreateUserResponse;
 import com.example.springscheduleapp.auth.dto.LoginRequest;
+import com.example.springscheduleapp.common.config.PasswordEncoder;
+import com.example.springscheduleapp.common.exception.UnauthorizedException;
+import com.example.springscheduleapp.common.exception.UserNotFoundException;
 import com.example.springscheduleapp.user.dto.*;
 import com.example.springscheduleapp.user.entity.User;
 import com.example.springscheduleapp.user.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 회원가입
     @Transactional
@@ -25,7 +30,8 @@ public class UserService {
         if (existEmail) {
             throw new IllegalStateException("중복된 이메일입니다.");
         }
-        User user = new User(request.name(), request.email(), request.password());
+        String passwordHashed = passwordEncoder.encode(request.password());
+        User user = new User(request.name(), request.email(), passwordHashed);
         User savedUser = userRepository.save(user);
         return CreateUserResponse.from(savedUser);
     }
@@ -69,12 +75,12 @@ public class UserService {
     }
 
     // 로그인
-    public User login(@Valid LoginRequest request) {
+    public User login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email()).orElseThrow(
-                () -> new IllegalStateException("이메일 또는 비밀번호가 일치하지 않습니다.")
+                () -> new UnauthorizedException("이메일 또는 비밀번호가 일치하지 않습니다.")
         );
-        if (!request.password().equals(user.getPassword())) {
-            throw new IllegalStateException("이메일 또는 비밀번호가 일치하지 않습니다.");
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new UnauthorizedException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
         return user;
     }
@@ -82,7 +88,7 @@ public class UserService {
     // 공통메서드 분리
     private User getOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 유저입니다.")
+                () -> new UserNotFoundException("해당 유저를 찾을 수 없습니다.")
         );
     }
 

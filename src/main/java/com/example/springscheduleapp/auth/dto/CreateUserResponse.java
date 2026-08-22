@@ -1,4 +1,4 @@
-package com.example.springscheduleapp.user.dto;
+package com.example.springscheduleapp.auth.dto;
 
 import com.example.springscheduleapp.user.entity.User;
 

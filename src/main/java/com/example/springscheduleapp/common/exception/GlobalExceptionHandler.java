@@ -35,6 +35,13 @@ public class GlobalExceptionHandler {
         log.error("[ERROR] 검증 실패", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(e.getBindingResult().getFieldErrors().stream().
-                                map(FieldError::getDefaultMessage).toList());
+                        map(FieldError::getDefaultMessage).toList());
+    }
+
+    // 없는 유저일때
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException e) {
+        log.error("[ERROR] UserNotFoundException 발생", e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

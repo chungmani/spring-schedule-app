@@ -1,5 +1,6 @@
 package com.example.springscheduleapp.user.controller;
 
+import com.example.springscheduleapp.auth.dto.SessionUser;
 import com.example.springscheduleapp.user.dto.*;
 import com.example.springscheduleapp.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +30,23 @@ public class UserController {
     }
 
     // 유저 수정
-    @PatchMapping("/{userId}")
+    @PatchMapping
     public ResponseEntity<UpdateUserResponse> update(
-            @PathVariable Long userId, @RequestBody UpdateUserRequest request) {
-        return ResponseEntity.ok(userService.updateUser(userId, request));
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @RequestBody UpdateUserRequest request) {
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(userService.updateUser(sessionUser.id(), request));
     }
 
     // 유저 삭제
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser) {
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        userService.deleteUser(sessionUser.id());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

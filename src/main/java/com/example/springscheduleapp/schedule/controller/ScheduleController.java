@@ -1,5 +1,6 @@
 package com.example.springscheduleapp.schedule.controller;
 
+import com.example.springscheduleapp.auth.dto.SessionUser;
 import com.example.springscheduleapp.common.Validate;
 import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.service.ScheduleService;
@@ -20,36 +21,57 @@ public class ScheduleController {
 
     // 일정 생성
     @PostMapping
-    public ResponseEntity<CreateScheduleResponse> createSchedule(Long userId, @RequestBody CreateScheduleRequest request) {
-        validate.validateTitle(request.title());
-        validate.validateContent(request.content());
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(userId, request));
+    public ResponseEntity<CreateScheduleResponse> createSchedule(
+            @SessionAttribute(name = "loginUser", required = false)SessionUser sessionUser,
+            @RequestBody CreateScheduleRequest request) {
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.create(sessionUser.id(), request));
     }
 
     // 전체 일정 조회
     @GetMapping
-    public ResponseEntity<List<GetSchedulesResponse>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll());
+    public ResponseEntity<List<GetSchedulesResponse>> getAll(
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser
+    ) {
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll(sessionUser.id()));
     }
 
     // 단건 조회
     @GetMapping("/{scheduleId}")
-    public ResponseEntity<GetScheduleResponse> getOne(@PathVariable Long scheduleId) {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getOne(scheduleId));
+    public ResponseEntity<GetScheduleResponse> getOne(
+            @PathVariable Long scheduleId,
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser) {
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getOne(scheduleId, sessionUser.id()));
     }
 
     // 일정 수정
     @PutMapping("/{scheduleId}")
     public ResponseEntity<UpdateScheduleResponse> update(
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
             @PathVariable Long scheduleId, @RequestBody UpdateScheduleRequest request) {
-        validate.validateTitle(request.title());
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(scheduleId, request));
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(sessionUser.id(), scheduleId, request));
     }
 
     // 일정 삭제
     @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<Void> delete(@PathVariable Long scheduleId) {
-        scheduleService.delete(scheduleId);
+    public ResponseEntity<Void> delete(
+            @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @PathVariable Long scheduleId) {
+        if (sessionUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        scheduleService.delete(scheduleId, sessionUser.id());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

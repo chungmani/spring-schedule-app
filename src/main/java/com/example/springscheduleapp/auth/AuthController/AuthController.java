@@ -43,7 +43,7 @@ public class AuthController {
             @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
             HttpSession session) {
         if (sessionUser == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         session.invalidate();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

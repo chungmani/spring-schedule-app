@@ -32,8 +32,8 @@ public class ScheduleService {
 
     // 전체 조회 메서드
     @Transactional(readOnly = true)
-    public List<GetSchedulesResponse> getAll() {
-        List<Schedule> schedules = scheduleRepository.findAll();
+    public List<GetSchedulesResponse> getAll(Long userId) {
+        List<Schedule> schedules = scheduleRepository.findAllByUser_Id(userId);
         return schedules.stream()
                 .map(GetSchedulesResponse::from)
                 .toList();
@@ -41,33 +41,31 @@ public class ScheduleService {
 
     // 단건 조회 + 댓글까지 조회
     @Transactional(readOnly = true)
-    public GetScheduleResponse getOne(Long scheduleId) {
-        Schedule schedule = getOrThrow(scheduleId);
+    public GetScheduleResponse getOne(Long scheduleId, Long userId) {
+        Schedule schedule = getOrThrow(scheduleId, userId);
         List<CommentResponse> comments = commentService.getAllComments(scheduleId);
-
         return GetScheduleResponse.from(schedule, comments);
     }
 
     // 일정 수정
     @Transactional
-    public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
-        Schedule schedule = getOrThrow(scheduleId);
-        schedule.updateSchedule(schedule.getTitle(), schedule.getContent());
+    public UpdateScheduleResponse update(Long userId, Long scheduleId, UpdateScheduleRequest request) {
+        Schedule schedule = getOrThrow(scheduleId, userId);
+        schedule.updateSchedule(request.title(), request.content());
         return UpdateScheduleResponse.from(schedule);
     }
 
     // 일정 삭제
     @Transactional
-    public void delete(Long scheduleId) {
-        Schedule schedule = getOrThrow(scheduleId);
+    public void delete(Long scheduleId, Long userId) {
+        Schedule schedule = getOrThrow(scheduleId, userId);
         scheduleRepository.delete(schedule);
     }
 
 
     // DB에서 id찾는 공통 처리 메서드
-    private Schedule getOrThrow(Long scheduleId) {
-        return scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 스케줄입니다.")
-        );
+    private Schedule getOrThrow(Long scheduleId, Long userId) {
+        return scheduleRepository.findByIdAndUser_Id(scheduleId, userId)
+                .orElseThrow(() -> new IllegalStateException("잘못된 요청입니다."));
     }
 }

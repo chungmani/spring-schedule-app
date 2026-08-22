@@ -5,6 +5,7 @@ import com.example.springscheduleapp.comment.dto.CreateCommentRequest;
 import com.example.springscheduleapp.comment.dto.CreateCommentResponse;
 import com.example.springscheduleapp.comment.entity.Comment;
 import com.example.springscheduleapp.comment.repository.CommentRepository;
+import com.example.springscheduleapp.common.exception.ScheduleNotFoundException;
 import com.example.springscheduleapp.schedule.entity.Schedule;
 import com.example.springscheduleapp.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class CommentService {
     @Transactional
     public CreateCommentResponse create(Long scheduleId, CreateCommentRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 스케줄입니다.")
+                () -> new ScheduleNotFoundException("일정을 찾을 수 없습니다.")
         );
         int count = commentRepository.findByCommentCount(scheduleId);
         if (count >= 10) {

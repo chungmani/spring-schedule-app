@@ -2,6 +2,7 @@ package com.example.springscheduleapp.schedule.service;
 
 import com.example.springscheduleapp.comment.dto.CommentResponse;
 import com.example.springscheduleapp.comment.service.CommentService;
+import com.example.springscheduleapp.common.exception.ScheduleNotFoundException;
 import com.example.springscheduleapp.schedule.dto.*;
 import com.example.springscheduleapp.schedule.entity.Schedule;
 import com.example.springscheduleapp.schedule.repository.ScheduleRepository;
@@ -66,6 +67,6 @@ public class ScheduleService {
     // DB에서 id찾는 공통 처리 메서드
     private Schedule getOrThrow(Long scheduleId, Long userId) {
         return scheduleRepository.findByIdAndUser_Id(scheduleId, userId)
-                .orElseThrow(() -> new IllegalStateException("잘못된 요청입니다."));
+                .orElseThrow(() -> new ScheduleNotFoundException("일정을 찾을 수 없습니다."));
     }
 }

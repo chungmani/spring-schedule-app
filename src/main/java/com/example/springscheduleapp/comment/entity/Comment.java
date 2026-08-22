@@ -1,6 +1,6 @@
 package com.example.springscheduleapp.comment.entity;
 
-import com.example.springscheduleapp.common.BaseEntity;
+import com.example.springscheduleapp.common.entity.BaseEntity;
 import com.example.springscheduleapp.schedule.entity.Schedule;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
